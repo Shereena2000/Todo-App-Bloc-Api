@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/data/data_model.dart';
+import 'package:todo_app/services/todo_services.dart';
 import 'package:todo_app/utils/buttons.dart';
 import 'package:todo_app/utils/colors.dart';
 
-class DialogBox extends StatelessWidget {
+class AddTodoBox extends StatelessWidget {
   // final Function(
   //   String,
   // ) onSave;
   // final Function(String, int) onedit;
   // int todoIndex;
-  DialogBox({
+  AddTodoBox({
     super.key,
     //  required this.onSave,
     // required this.onedit,
@@ -18,6 +20,8 @@ class DialogBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleController = TextEditingController();
+    final discriptionController = TextEditingController();
+    final TodoServices todoServices=TodoServices();
     return AlertDialog(
       backgroundColor: deepPurpleshadeColor,
       content: SizedBox(
@@ -30,10 +34,10 @@ class DialogBox extends StatelessWidget {
               decoration: const InputDecoration(
                   border: OutlineInputBorder(), hintText: "Add a new task"),
             ),
-             TextField(
-              controller: titleController,
+            TextField(
+              controller: discriptionController,
               decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: "Add discription"), 
+                  border: OutlineInputBorder(), hintText: "Add discription"),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -49,6 +53,15 @@ class DialogBox extends StatelessWidget {
                 MyButton(
                     text: "Save",
                     onPressed: () {
+                      final newTodo = Todo(
+                          id: "",
+                          title: titleController.text,
+                          description: discriptionController.text,
+                          isCompleted: false );
+                          todoServices.CreateTodo(newTodo);
+                    //  List<Todo>result= todoServices.FetchTodo();
+                          titleController.clear();
+                          discriptionController.clear();
                       Navigator.pop(context);
                     })
               ],

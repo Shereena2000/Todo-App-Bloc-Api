@@ -45,6 +45,10 @@ class TodoTile extends StatelessWidget {
                 //   checkColor: deepPurpleColor,
                 //   side: const BorderSide(color: whiteColor),
                 // ),
+                IconButton(
+              icon: Icon(color: whiteColor,taskCompleted ? Icons.check_box : Icons.check_box_outline_blank),
+              onPressed: (){},
+            ),
                 Text(
                   taskName,
                   style: TextStyle(
@@ -62,7 +66,7 @@ class TodoTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return DialogBox();
+                        return AddTodoBox();
                       },
                     );
                   },
