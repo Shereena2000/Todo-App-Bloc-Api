@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/bloc/todo_bloc.dart';
 import 'package:todo_app/data/data_model.dart';
-import 'package:todo_app/services/todo_services.dart';
 import 'package:todo_app/utils/buttons.dart';
 import 'package:todo_app/utils/colors.dart';
 
 class AddTodoBox extends StatelessWidget {
-  // final Function(
-  //   String,
-  // ) onSave;
-  // final Function(String, int) onedit;
-  // int todoIndex;
+  final Todo? todo;
+
   AddTodoBox({
     super.key,
-    //  required this.onSave,
-    // required this.onedit,
-    // this.todoIndex = -1,
+    this.todo,
   });
 
   @override
   Widget build(BuildContext context) {
     final titleController = TextEditingController();
     final discriptionController = TextEditingController();
-    final TodoServices todoServices=TodoServices();
+
+    if (todo?.id != null) {
+      titleController.text = todo!.title;
+      discriptionController.text = todo!.description;
+    }
+
     return AlertDialog(
       backgroundColor: deepPurpleshadeColor,
       content: SizedBox(
@@ -31,13 +32,18 @@ class AddTodoBox extends StatelessWidget {
           children: [
             TextField(
               controller: titleController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: "Add a new task"),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText:
+                      todo?.title == null ? "Add a new task" : todo!.title),
             ),
             TextField(
               controller: discriptionController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: "Add discription"),
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: todo?.description == null
+                      ? "Add discription"
+                      : todo!.description),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -53,15 +59,37 @@ class AddTodoBox extends StatelessWidget {
                 MyButton(
                     text: "Save",
                     onPressed: () {
-                      final newTodo = Todo(
-                          id: "",
-                          title: titleController.text,
-                          description: discriptionController.text,
-                          isCompleted: false );
-                          todoServices.CreateTodo(newTodo);
-                    //  List<Todo>result= todoServices.FetchTodo();
-                          titleController.clear();
-                          discriptionController.clear();
+                      if (todo != null) {
+                        final updatedTodo = Todo(
+                            id: todo!.id,
+                            title: titleController.text,
+                            description: discriptionController.text,
+                            isCompleted: todo!.isCompleted);
+                        context.read<TodoBloc>().add(EditTodo(updatedTodo));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Todo Edited Successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } else {
+                        final newTodo = Todo(
+                            id: DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString(),
+                            title: titleController.text,
+                            description: discriptionController.text,
+                            isCompleted: false);
+                        context.read<TodoBloc>().add(AddTodo(newTodo));
+                        print("----------CLICKLED- SAVE--------");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Todo Added Successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+
                       Navigator.pop(context);
                     })
               ],

@@ -1,6 +1,10 @@
 import 'dart:convert';
 
-class Todo {
+import 'package:equatable/equatable.dart';
+
+// import 'package:equatable/equatable.dart';
+
+class Todo extends Equatable {
   String id;
   String title;
   String description;
@@ -43,4 +47,7 @@ class Todo {
         "description": description,
         "is_completed": isCompleted,
       };
+
+  @override
+  List<Object?> get props => [id, title, description, isCompleted];
 }
